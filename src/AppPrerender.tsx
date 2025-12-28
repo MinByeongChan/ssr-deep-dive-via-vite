@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from './assets/vite.svg'
 
@@ -9,24 +9,15 @@ interface PostContent {
   userId: number;
 }
 
-function App() {
-  const [count, setCount] = useState(0)
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<PostContent[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
+interface AppPrerenderProps {
+  error: string | null;
+  data: PostContent[] | null;
+}
 
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-    .then((response) => response.json())
-    .then((json) => {
-      setData(json);
-      setLoading(false);
-    })
-    .catch((error) => {
-      setLoading(false);
-      setError('Error: ' + error.message);
-    });
-  }, []);
+function AppPrerender({ error, data }: AppPrerenderProps) {
+  const [count, setCount] = useState(0)
+
+  console.log('AppPrerender')
 
   return (
     <div>
@@ -46,9 +37,8 @@ function App() {
 
       <div>
         <h1>게시글 불러오기</h1>
-        {loading && <h1>Loading...</h1>}
         {error && <h1>Error: {error}</h1>}
-        {!loading && !error && data && (
+        {!error && data && (
           <ul>
             {data?.map((item) => (
               <li key={item.id}>{item.title}</li>
@@ -60,4 +50,4 @@ function App() {
   )
 }
 
-export default App
+export default AppPrerender
