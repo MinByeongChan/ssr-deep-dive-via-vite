@@ -1,6 +1,5 @@
-import { useEffect, useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
+import { useState } from 'react'
+import { Content } from './ui/Content';
 
 interface PostContent {
   id: number;
@@ -9,53 +8,18 @@ interface PostContent {
   userId: number;
 }
 
-function App() {
+function App({ message, data, error }: { message: string, data: PostContent[] | null, error: string | null }) {
   const [count, setCount] = useState(0)
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState<PostContent[] | null>(null);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-    .then((response) => response.json())
-    .then((json) => {
-      setData(json);
-      setLoading(false);
-    })
-    .catch((error) => {
-      setLoading(false);
-      setError('Error: ' + error.message);
-    });
-  }, []);
-
+  
   return (
     <div>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-      </div>
+      <h1>{message}</h1>
+      <p>{count} count</p>
+      <button onClick={() => setCount((count) => count + 1)}>
+        Click Me
+      </button>
 
-      <div>
-        <h1>게시글 불러오기</h1>
-        {loading && <h1>Loading...</h1>}
-        {error && <h1>Error: {error}</h1>}
-        {!loading && !error && data && (
-          <ul>
-            {data?.map((item) => (
-              <li key={item.id}>{item.title}</li>
-            ))}
-          </ul>
-        )}
-      </div>
+      <Content error={error} data={data} />
     </div>
   )
 }
