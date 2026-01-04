@@ -6,9 +6,10 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
-    "build:server-prerender": "vite build --ssr src/entry-server-prerender.tsx --outDir dist/server",
+    "build:client": "vite build --outDir dist",
+    "build:client-prerender": "vite build --outDir dist",
+    "build:server": "vite build --ssr frontend/src/entry-server.tsx --outDir dist/server",
+    "build:server-prerender": "vite build --ssr frontend/src/entry-prerender-hydrate.tsx --outDir dist/server",
     "lint": "eslint .",
     "preview": "vite preview",
     "start:ssr": "tsx watch backend/server.ts",

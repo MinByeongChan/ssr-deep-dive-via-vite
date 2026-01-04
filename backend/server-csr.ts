@@ -5,13 +5,13 @@ import fs from 'fs';
 const app = express();
 
 const __dirname = path.resolve();
-const distPath = path.join(__dirname, 'dist');
+const distPath = path.join(__dirname, '/dist');
 
 // static files accessible
-app.use('/assets', express.static(distPath+'/client/assets', { dotfiles: 'allow' }))
+app.use('/assets', express.static(distPath+'/frontend/assets', { dotfiles: 'allow' }))
 app.get(/.*/, async (_req: express.Request, res: express.Response) => {
     try { 
-        const template = fs.readFileSync(path.join(distPath, '/client/index.html'), 'utf8');
+        const template = fs.readFileSync(path.join(distPath, '/frontend/index.html'), 'utf8');
         res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).end(template);
         
     } catch (error) {

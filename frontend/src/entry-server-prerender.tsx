@@ -1,14 +1,7 @@
 import { StrictMode } from 'react'
-import AppPrerender from './AppPrerender.tsx'
+import type { PostContent } from './types.ts';
 
-interface PostContent {
-  id: number;
-  title: string;
-  body: string;
-  userId: number;
-}
-
-const render = async () => {
+export async function render() {
   let data: PostContent[] | null = null;
   let error: string | null = null;
 
@@ -26,14 +19,22 @@ const render = async () => {
           <meta charSet="UTF-8" />
           <link rel="icon" type="image/svg+xml" href="/vite.svg" />
           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-          <title>메롱</title>
+          <title>프리렌더</title>
         </head>
-        <AppPrerender error={error} data={data} />
+        <body>
+          <div id="root">
+            {/* <Prerender error={error} data={data} /> */}
+          </div>
+          <script
+            id="__INITIAL_DATA__"
+            type="application/json"
+            dangerouslySetInnerHTML={{
+              __html: JSON.stringify({ error, data }),
+            }}
+          />
+          <script type="module" src="/frontend/src/entry-prerender-hydrate.tsx"></script>
+        </body>
       </html>
     </StrictMode>
   )
-}
-
-export {
-  render
 }

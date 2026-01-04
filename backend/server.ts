@@ -7,14 +7,15 @@ import { createServer  } from 'vite'
 const app = express();
 
 const __dirname = path.resolve();
-const distPath = path.join(__dirname, 'dist');
+const distPath = path.join(__dirname, '/dist');
 
-// static files accessible
-app.use('/assets', express.static(distPath+'/client/assets', { dotfiles: 'allow' }))
-app.use(/.*\.(svg|png|jpg|jpeg|gif|webp)$/, express.static(distPath+'/client', { dotfiles: 'allow' }))
 const baseUrl = process.env.BASE || '/'
 
-app.get(/.*/, async (req: express.Request, res: express.Response) => {
+app.get(/.*/, async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    // 확장자를 가진 리소스 요청은 SSR 라우트를 타지 않도록 패스
+    if (/\.(?:js|css|map|png|jpg|jpeg|gif|webp|svg|ico|txt|woff2?|ttf)$/i.test(req.path)) {
+        return next();
+    }
     const url = req.originalUrl
     const vite = await createServer({
         server: { middlewareMode: true },
@@ -26,24 +27,22 @@ app.get(/.*/, async (req: express.Request, res: express.Response) => {
 
     try { 
         // Server Side Rendering
-        const originTemplate = fs.readFileSync(path.join(distPath+'/client', 'index.html'), 'utf8');
+        const originTemplate = fs.readFileSync(path.join(distPath+'/frontend/index.html'), 'utf8');
         const transformedTemplate = await vite.transformIndexHtml(url, originTemplate)
         const App = (await import(distPath+ '/server/entry-server.js')).render()
         const reactHtml = renderToString(App);
 
-        const html = transformedTemplate.replace('<!--ssr-outlet-->', () => reactHtml);
+        const html = transformedTemplate.replace('<div id="root" style="background-color: red; width: 100%; height: calc(100vh);"></div>', `<div id="root" style="background-color: red; width: 100%; height: calc(100vh);">${reactHtml}</div>`);
         res.status(200).set({ 'Content-Type': 'text/html; charset=utf-8' }).end(html);
-
-        // Static Site Generation
-        // const originTemplate = fs.readFileSync(path.join(distPath+'/client', 'index.html'), 'utf8');
-        // const transformedTemplate = await vite.transformIndexHtml(url, originTemplate)
-        // // const App = (await import(distPath+ '/server/entry-server.js')).render()
-        // const reactHtml = renderToString(App);
     } catch (error) {
         console.error('Error', error)
         res.status(500).set({ 'Content-Type': 'text/html; charset=utf-8' }).end('Error');
     }
 });
+
+app.use('/assets', express.static(path.join(distPath, 'assets'), { dotfiles: 'allow' }))
+
+app.use(/.*\.(svg|png|jpg|jpeg|gif|webp|js|css)$/, express.static(distPath, { dotfiles: 'allow' }))
 
 const server = app.listen(3000, () => {
     console.log('Server is running on port 3000');
