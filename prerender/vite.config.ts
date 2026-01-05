@@ -11,6 +11,12 @@ export default defineConfig({
       },
     }),
   ],
+  // base 경로를 설정하여 빌드 결과물의 에셋 참조 경로를 변경합니다.
+  // 예: /client/assets/index.js
+  base: '/client/', 
+  build: {
+    outDir: 'dist/client',
+  },
   resolve: {
     alias: {
       '@fe': path.resolve(__dirname, './frontend'),
