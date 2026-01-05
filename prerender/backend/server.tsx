@@ -35,7 +35,7 @@ app.use('/client', express.static(distPath+'/client', { dotfiles: 'allow' }))
 const baseUrl = process.env.BASE || '/'
 const originTemplate = fs.readFileSync(path.join(distPath+'/client', 'index.html'), 'utf8');
 
-app.get(/.*/, async (req: express.Request, res: express.Response) => {
+app.get(/.*/, async (_req: express.Request, res: express.Response) => {
     const vite = await createServer({
         server: { middlewareMode: true },
         appType: 'custom',
@@ -53,19 +53,14 @@ app.get(/.*/, async (req: express.Request, res: express.Response) => {
 
         const response = await fetch('https://jsonplaceholder.typicode.com/posts')
         try { 
-            const data = await response.json()
-            console.log('data', data)
-            initialProps.data = data;
+            const data = await response.json() as PostContent[]
+            initialProps.data = data
         } catch (error) {
-            initialProps.error = error;
+            initialProps.error = (error as Error).message
             console.log('error', error)
         }
 
-        const reactHtml = renderToString(
-            <React.StrictMode>
-                <App {...initialProps} />
-            </React.StrictMode>
-        );
+        const reactHtml = renderToString(<App {...initialProps} />);
         
         let html = originTemplate.replace(`<!--ssr-outlet-->`, reactHtml);
         

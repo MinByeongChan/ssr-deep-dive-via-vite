@@ -2,7 +2,6 @@ import { StrictMode } from 'react'
 import { hydrateRoot } from 'react-dom/client'
 import App from './App.tsx'
 
-
 declare global {
   interface Window {
     __INITIAL_PROPS__: any;
@@ -10,9 +9,10 @@ declare global {
 }
 
 const initialProps = window.__INITIAL_PROPS__;
+console.log('initialProps', initialProps)
 
-hydrateRoot(document.getElementById('root')!, (
+hydrateRoot(document.getElementById('root')!,
   <StrictMode>
     <App {...initialProps} />
   </StrictMode>
-));
+  )

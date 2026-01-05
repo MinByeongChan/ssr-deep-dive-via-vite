@@ -1,0 +1,11 @@
+node_modules
+dist
+*.local
+
+# Editor directories and files
+.DS_Store
+.idea
+
+# npm login auth
+.npmrc
+.vscode*

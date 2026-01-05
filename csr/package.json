@@ -5,15 +5,10 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && npm run build:client && npm run build:server",
-    "build:client": "vite build --outDir dist/client",
-    "build:server": "vite build --ssr src/entry-client.tsx --outDir dist/server",
-    "build:server-prerender": "vite build --ssr src/entry-server-prerender.tsx --outDir dist/server",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start:ssr": "tsx watch backend/server.tsx",
-    "start:csr": "tsx watch backend/server-csr.ts",
-    "start:server-prerender": "tsx watch backend/pre-render.ts"
+    "start": "tsx watch backend/server.tsx"
   },
   "dependencies": {
     "express": "^5.2.1",
